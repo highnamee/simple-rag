@@ -3,9 +3,9 @@ Core package initialization.
 """
 
 from .document_processor import Document, DocumentProcessor
-from .vector_store import VectorStore, RAGIndexer
-from .rag_system import RAGSystem, LMStudioClient, ChatMessage
-from .local_ai_client import LocalAIClient, AIProvider
+from .local_ai_client import AIProvider, LocalAIClient
+from .rag_system import ChatMessage, LMStudioClient, RAGSystem
+from .vector_store import RAGIndexer, VectorStore
 
 __all__ = [
     "Document",
@@ -16,5 +16,5 @@ __all__ = [
     "LMStudioClient",
     "LocalAIClient",
     "AIProvider",
-    "ChatMessage"
+    "ChatMessage",
 ]

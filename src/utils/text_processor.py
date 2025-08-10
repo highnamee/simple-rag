@@ -41,7 +41,7 @@ class TextProcessor:
     def _find_boundary(self, text: str, start: int, end: int) -> int:
         """Find the best boundary for text chunking."""
         # Look for sentence endings first
-        sentence_endings = ['. ', '! ', '? ', '\n\n']
+        sentence_endings = [". ", "! ", "? ", "\n\n"]
         best_break = -1
 
         for ending in sentence_endings:
@@ -51,7 +51,7 @@ class TextProcessor:
 
         # If no sentence ending found, look for word boundary
         if best_break == -1:
-            pos = text.rfind(' ', start, end)
+            pos = text.rfind(" ", start, end)
             if pos > start:
                 best_break = pos + 1
 
@@ -60,32 +60,89 @@ class TextProcessor:
     def clean_text(self, text: str) -> str:
         """Clean and normalize text."""
         # Remove excessive whitespace
-        lines = [line.strip() for line in text.split('\n')]
+        lines = [line.strip() for line in text.split("\n")]
         cleaned_lines = []
 
         for line in lines:
             if line:  # Skip empty lines
                 cleaned_lines.append(line)
 
-        return '\n'.join(cleaned_lines)
+        return "\n".join(cleaned_lines)
 
     def extract_keywords(self, text: str, max_words: int = 10) -> List[str]:
         """Extract potential keywords from text (simple approach)."""
         import re
 
         # Simple keyword extraction - just get common words
-        words = re.findall(r'\b[a-zA-Z]{3,}\b', text.lower())
+        words = re.findall(r"\b[a-zA-Z]{3,}\b", text.lower())
 
         # Filter out common stop words
         stop_words = {
-            'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of',
-            'with', 'by', 'from', 'up', 'about', 'into', 'through', 'during',
-            'before', 'after', 'above', 'below', 'between', 'among', 'this',
-            'that', 'these', 'those', 'his', 'her', 'their', 'what', 'which',
-            'who', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each',
-            'few', 'more', 'most', 'other', 'some', 'such', 'only', 'own',
-            'same', 'also', 'just', 'than', 'too', 'very', 'can', 'will',
-            'should', 'could', 'would', 'may', 'might', 'must', 'shall'
+            "the",
+            "and",
+            "or",
+            "but",
+            "in",
+            "on",
+            "at",
+            "to",
+            "for",
+            "of",
+            "with",
+            "by",
+            "from",
+            "up",
+            "about",
+            "into",
+            "through",
+            "during",
+            "before",
+            "after",
+            "above",
+            "below",
+            "between",
+            "among",
+            "this",
+            "that",
+            "these",
+            "those",
+            "his",
+            "her",
+            "their",
+            "what",
+            "which",
+            "who",
+            "when",
+            "where",
+            "why",
+            "how",
+            "all",
+            "any",
+            "both",
+            "each",
+            "few",
+            "more",
+            "most",
+            "other",
+            "some",
+            "such",
+            "only",
+            "own",
+            "same",
+            "also",
+            "just",
+            "than",
+            "too",
+            "very",
+            "can",
+            "will",
+            "should",
+            "could",
+            "would",
+            "may",
+            "might",
+            "must",
+            "shall",
         }
 
         keywords = [word for word in words if word not in stop_words]

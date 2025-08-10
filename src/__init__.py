@@ -11,12 +11,16 @@ This package provides:
 __version__ = "1.0.0"
 __author__ = "Simple RAG System"
 
+from .cli import CLIInterface
+
 # Import main components
 from .core import (
-    Document, DocumentProcessor,
-    VectorStore, RAGIndexer,
-    RAGSystem, LMStudioClient, ChatMessage
+    ChatMessage,
+    Document,
+    DocumentProcessor,
+    LMStudioClient,
+    RAGIndexer,
+    RAGSystem,
+    VectorStore,
 )
-
 from .utils import config, logger
-from .cli import CLIInterface

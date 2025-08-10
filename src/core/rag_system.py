@@ -4,9 +4,9 @@ RAG system orchestration and Local AI integration.
 
 from typing import List, Optional
 
-from .vector_store import VectorStore
-from .local_ai_client import LocalAIClient, ChatMessage
 from ..utils import logger
+from .local_ai_client import ChatMessage, LocalAIClient
+from .vector_store import VectorStore
 
 
 class RAGSystem:
@@ -36,11 +36,13 @@ Always ground your responses in the provided context when possible."""
 
         return "\n\n" + "\n\n".join(context_parts)
 
-    def generate_response(self,
-                         query: str,
-                         context: str,
-                         conversation_history: List[ChatMessage] = None,
-                         stream: bool = False) -> Optional[str]:
+    def generate_response(
+        self,
+        query: str,
+        context: str,
+        conversation_history: List[ChatMessage] = None,
+        stream: bool = False,
+    ) -> Optional[str]:
         """Generate response using retrieved context."""
 
         # Build the prompt with context
@@ -78,7 +80,9 @@ Please answer the question using the provided context. If the context doesn't co
 
         return response, context
 
-    def chat_completion_stream(self, message: str, history: List[ChatMessage] = None, k: int = 5):
+    def chat_completion_stream(
+        self, message: str, history: List[ChatMessage] = None, k: int = 5
+    ):
         """Stream chat completion with RAG context."""
         logger.info(f"Processing streaming chat: {message}")
 

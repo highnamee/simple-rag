@@ -3,10 +3,10 @@ Document processing and management.
 """
 
 import os
-from pathlib import Path
-from typing import List
 from dataclasses import dataclass
 from datetime import datetime
+from pathlib import Path
+from typing import List
 
 from ..utils import FileUtils, TextProcessor, logger
 
@@ -14,6 +14,7 @@ from ..utils import FileUtils, TextProcessor, logger
 @dataclass
 class Document:
     """Represents a document with metadata."""
+
     file_path: str
     content: str
     chunk_id: str
@@ -28,7 +29,16 @@ class Document:
 class DocumentProcessor:
     """Handles document loading and chunking."""
 
-    SUPPORTED_EXTENSIONS = {'.txt', '.md', '.py', '.js', '.json', '.csv', '.html', '.xml'}
+    SUPPORTED_EXTENSIONS = {
+        ".txt",
+        ".md",
+        ".py",
+        ".js",
+        ".json",
+        ".csv",
+        ".html",
+        ".xml",
+    }
 
     def __init__(self, chunk_size: int = 512, chunk_overlap: int = 50):
         self.text_processor = TextProcessor(chunk_size, chunk_overlap)
@@ -71,8 +81,8 @@ class DocumentProcessor:
                 chunk_index=i,
                 total_chunks=len(chunks),
                 created_at=datetime.now().isoformat(),
-                file_size=file_info.get('size', 0),
-                file_type=file_info.get('extension', '')
+                file_size=file_info.get("size", 0),
+                file_type=file_info.get("extension", ""),
             )
             documents.append(doc)
 
@@ -85,6 +95,8 @@ class DocumentProcessor:
             logger.error(f"Directory not found: {directory}")
             return []
 
-        files = self.file_utils.scan_directory(directory, list(self.SUPPORTED_EXTENSIONS))
+        files = self.file_utils.scan_directory(
+            directory, list(self.SUPPORTED_EXTENSIONS)
+        )
         logger.info(f"Found {len(files)} supported files in {directory}")
         return files

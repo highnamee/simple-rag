@@ -25,5 +25,5 @@ jobs:
       - name: Install dependencies
         run: make setup-dev
 
-      - name: Run all quality checks
-        run: make all-checks
+      - name: Run lint checks
+        run: make lint

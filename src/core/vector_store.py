@@ -4,22 +4,23 @@ Vector storage and similarity search.
 
 import json
 import pickle
-import numpy as np
 from pathlib import Path
-from typing import List, Dict, Any, Tuple
-from sentence_transformers import SentenceTransformer
-import faiss
+from typing import Any, Dict, List, Tuple
 
+import faiss
+import numpy as np
+from sentence_transformers import SentenceTransformer
+
+from ..utils import FileUtils, logger
 from .document_processor import Document, DocumentProcessor
-from ..utils import logger, FileUtils
 
 
 class VectorStore:
     """Manages vector embeddings and similarity search using FAISS."""
 
-    def __init__(self,
-                 model_name: str = "all-MiniLM-L6-v2",
-                 vector_db_path: str = "./vector_db"):
+    def __init__(
+        self, model_name: str = "all-MiniLM-L6-v2", vector_db_path: str = "./vector_db"
+    ):
         self.model_name = model_name
         self.vector_db_path = Path(vector_db_path)
         self.file_utils = FileUtils()
@@ -80,7 +81,9 @@ class VectorStore:
                     with open(hashes_path, "r") as f:
                         self.file_hashes = json.load(f)
 
-                logger.info(f"Loaded existing index with {len(self.documents)} documents")
+                logger.info(
+                    f"Loaded existing index with {len(self.documents)} documents"
+                )
 
             except Exception as e:
                 logger.error(f"Error loading index: {e}")
@@ -90,7 +93,9 @@ class VectorStore:
 
     def _initialize_empty_index(self):
         """Initialize empty FAISS index."""
-        self.index = faiss.IndexFlatIP(self.embedding_dim)  # Inner product for cosine similarity
+        self.index = faiss.IndexFlatIP(
+            self.embedding_dim
+        )  # Inner product for cosine similarity
         self.documents = []
         self.file_hashes = {}
         logger.info("Initialized empty vector index")
@@ -111,7 +116,7 @@ class VectorStore:
         embeddings = embeddings / np.linalg.norm(embeddings, axis=1, keepdims=True)
 
         # Add to FAISS index
-        self.index.add(embeddings.astype('float32'))
+        self.index.add(embeddings.astype("float32"))
 
         # Store documents
         self.documents.extend(documents)
@@ -139,10 +144,12 @@ class VectorStore:
 
         # Generate query embedding
         query_embedding = self.model.encode([query])
-        query_embedding = query_embedding / np.linalg.norm(query_embedding, axis=1, keepdims=True)
+        query_embedding = query_embedding / np.linalg.norm(
+            query_embedding, axis=1, keepdims=True
+        )
 
         # Search
-        scores, indices = self.index.search(query_embedding.astype('float32'), k)
+        scores, indices = self.index.search(query_embedding.astype("float32"), k)
 
         # Return documents with scores
         results = []
@@ -162,18 +169,20 @@ class VectorStore:
             "total_files": file_count,
             "embedding_dimension": self.embedding_dim,
             "model_name": self.model_name,
-            "index_size": self.index.ntotal if self.index else 0
+            "index_size": self.index.ntotal if self.index else 0,
         }
 
 
 class RAGIndexer:
     """Manages incremental indexing of documents."""
 
-    def __init__(self,
-                 data_folder: str,
-                 vector_store: VectorStore,
-                 chunk_size: int = 512,
-                 chunk_overlap: int = 50):
+    def __init__(
+        self,
+        data_folder: str,
+        vector_store: VectorStore,
+        chunk_size: int = 512,
+        chunk_overlap: int = 50,
+    ):
         self.data_folder = Path(data_folder)
         self.vector_store = vector_store
         self.processor = DocumentProcessor(chunk_size, chunk_overlap)
@@ -230,7 +239,9 @@ class RAGIndexer:
             documents = self.processor.process_file(file_path)
             if documents:
                 self.vector_store.add_documents(documents)
-                self.vector_store.file_hashes[file_path] = self.processor.file_utils.get_file_hash(file_path)
+                self.vector_store.file_hashes[file_path] = (
+                    self.processor.file_utils.get_file_hash(file_path)
+                )
                 total_docs += len(documents)
 
         self.vector_store.save_index()

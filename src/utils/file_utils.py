@@ -2,8 +2,8 @@
 File and path utilities.
 """
 
-import os
 import hashlib
+import os
 from pathlib import Path
 from typing import List, Optional
 
@@ -15,7 +15,7 @@ class FileUtils:
     def get_file_hash(file_path: str) -> str:
         """Calculate SHA-256 hash of file content."""
         try:
-            with open(file_path, 'rb') as f:
+            with open(file_path, "rb") as f:
                 return hashlib.sha256(f.read()).hexdigest()
         except Exception:
             return ""
@@ -43,19 +43,19 @@ class FileUtils:
     @staticmethod
     def read_text_file(file_path: str) -> Optional[str]:
         """Read text file with encoding fallback."""
-        encodings = ['utf-8', 'latin-1', 'cp1252']
+        encodings = ["utf-8", "latin-1", "cp1252"]
 
         for encoding in encodings:
             try:
-                with open(file_path, 'r', encoding=encoding) as f:
+                with open(file_path, "r", encoding=encoding) as f:
                     return f.read()
             except UnicodeDecodeError:
                 continue
 
         # Last resort: read as binary and decode with errors='ignore'
         try:
-            with open(file_path, 'rb') as f:
-                return f.read().decode('utf-8', errors='ignore')
+            with open(file_path, "rb") as f:
+                return f.read().decode("utf-8", errors="ignore")
         except Exception:
             return None
 
@@ -68,8 +68,8 @@ class FileUtils:
 
         stat = path.stat()
         return {
-            'size': stat.st_size,
-            'extension': path.suffix.lower(),
-            'name': path.name,
-            'parent': str(path.parent)
+            "size": stat.st_size,
+            "extension": path.suffix.lower(),
+            "name": path.name,
+            "parent": str(path.parent),
         }

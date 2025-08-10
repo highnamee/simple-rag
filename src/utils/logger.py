@@ -4,8 +4,8 @@ Logging utilities for the RAG system.
 
 import logging
 import sys
-from typing import Optional
 from pathlib import Path
+from typing import Optional
 
 
 class Logger:
@@ -23,8 +23,8 @@ class Logger:
         """Setup console logging handler."""
         handler = logging.StreamHandler(sys.stdout)
         formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-            datefmt='%Y-%m-%d %H:%M:%S'
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
         )
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)
@@ -36,8 +36,8 @@ class Logger:
 
         handler = logging.FileHandler(log_file)
         formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-            datefmt='%Y-%m-%d %H:%M:%S'
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
         )
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)

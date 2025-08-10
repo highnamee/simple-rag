@@ -2,12 +2,13 @@
 CLI interface utilities and formatting.
 """
 
+from typing import Any, Dict
+
 from rich.console import Console
-from rich.panel import Panel
-from rich.markdown import Markdown
-from rich.prompt import Prompt
 from rich.live import Live
-from typing import Dict, Any
+from rich.markdown import Markdown
+from rich.panel import Panel
+from rich.prompt import Prompt
 
 from ..utils import logger
 
@@ -71,14 +72,18 @@ class CLIInterface:
             Panel(Text(""), title=title, border_style="green"),
             console=self.console,
             refresh_per_second=20,
-            transient=False
+            transient=False,
         ) as live:
             try:
                 for chunk in response_stream:
                     if chunk:
                         full_response += chunk
                         # Update the live display immediately with each chunk
-                        live.update(Panel(Text(full_response), title=title, border_style="green"))
+                        live.update(
+                            Panel(
+                                Text(full_response), title=title, border_style="green"
+                            )
+                        )
             except Exception as e:
                 live.stop()
                 self.print_error(f"Error during streaming: {e}")
@@ -87,7 +92,11 @@ class CLIInterface:
         # Show final formatted version with markdown
         if full_response.strip():
             self.console.print("\n" + "─" * 50)
-            self.console.print(Panel(Markdown(full_response), title="Final Response", border_style="blue"))
+            self.console.print(
+                Panel(
+                    Markdown(full_response), title="Final Response", border_style="blue"
+                )
+            )
         else:
             self.print_error("No response received from streaming")
 
@@ -109,7 +118,7 @@ class CLIInterface:
                                 Markdown(full_response),
                                 title="🤖 AI Response",
                                 border_style="green",
-                                padding=(0, 1)
+                                padding=(0, 1),
                             )
                             live.update(formatted_panel)
                         except Exception:
@@ -118,7 +127,7 @@ class CLIInterface:
                                 full_response,
                                 title="🤖 AI Response",
                                 border_style="green",
-                                padding=(0, 1)
+                                padding=(0, 1),
                             )
                             live.update(plain_panel)
 
@@ -141,21 +150,32 @@ class CLIInterface:
         full_response = ""
         response_text = Text()
 
-        with Live(Panel(response_text, title=title, border_style="green"),
-                  console=self.console, refresh_per_second=10) as live:
+        with Live(
+            Panel(response_text, title=title, border_style="green"),
+            console=self.console,
+            refresh_per_second=10,
+        ) as live:
             try:
                 for chunk in response_stream:
                     if chunk:
                         full_response += chunk
                         response_text = Text(full_response)
-                        live.update(Panel(response_text, title=title, border_style="green"))
+                        live.update(
+                            Panel(response_text, title=title, border_style="green")
+                        )
             except Exception as e:
                 self.print_error(f"Error during streaming: {e}")
                 return
 
         # Final display with markdown formatting
         if full_response.strip():
-            self.console.print(Panel(Markdown(full_response), title="Final Response", border_style="green"))
+            self.console.print(
+                Panel(
+                    Markdown(full_response),
+                    title="Final Response",
+                    border_style="green",
+                )
+            )
         else:
             self.print_error("No response received from streaming")
 
@@ -184,14 +204,20 @@ Embedding model: {stats['model_name']}
 Embedding dimension: {stats['embedding_dimension']}
 Index size: {stats['index_size']}
         """
-        self.console.print(Panel(stats_text, title="Index Statistics", border_style="blue"))
+        self.console.print(
+            Panel(stats_text, title="Index Statistics", border_style="blue")
+        )
 
     def display_indexing_stats(self, stats: Dict[str, int]):
         """Display indexing completion statistics."""
         self.print_success("Indexing complete:")
         self.console.print(f"   • New files: {stats['new_files']}", style="green")
-        self.console.print(f"   • Updated files: {stats['updated_files']}", style="green")
-        self.console.print(f"   • Unchanged files: {stats['unchanged_files']}", style="green")
+        self.console.print(
+            f"   • Updated files: {stats['updated_files']}", style="green"
+        )
+        self.console.print(
+            f"   • Unchanged files: {stats['unchanged_files']}", style="green"
+        )
 
     def display_models(self, models: list):
         """Display available models."""

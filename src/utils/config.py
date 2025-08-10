@@ -3,7 +3,8 @@ Configuration management utilities.
 """
 
 import os
-from typing import Dict, Any
+from typing import Any, Dict
+
 from dotenv import load_dotenv
 
 
@@ -19,32 +20,30 @@ class Config:
         """Load configuration from environment variables."""
         return {
             # AI Provider settings
-            'ai_provider': os.getenv('AI_PROVIDER', 'lmstudio').lower(),
-            'ai_api_url': os.getenv('AI_API_URL', self._get_default_url()),
-            'ai_api_key': os.getenv('AI_API_KEY'),
-            'ai_model': os.getenv('AI_MODEL'),
-
+            "ai_provider": os.getenv("AI_PROVIDER", "lmstudio").lower(),
+            "ai_api_url": os.getenv("AI_API_URL", self._get_default_url()),
+            "ai_api_key": os.getenv("AI_API_KEY"),
+            "ai_model": os.getenv("AI_MODEL"),
             # Legacy LMStudio settings (for backward compatibility)
-            'lmstudio_url': os.getenv('LMSTUDIO_API_URL', 'http://localhost:1234/v1'),
-            'lmstudio_key': os.getenv('LMSTUDIO_API_KEY', 'lm-studio'),
-
+            "lmstudio_url": os.getenv("LMSTUDIO_API_URL", "http://localhost:1234/v1"),
+            "lmstudio_key": os.getenv("LMSTUDIO_API_KEY", "lm-studio"),
             # Data and storage
-            'data_folder': os.getenv('DATA_FOLDER', './data'),
-            'vector_db_path': os.getenv('VECTOR_DB_PATH', './vector_db'),
-            'chunk_size': int(os.getenv('CHUNK_SIZE', '512')),
-            'chunk_overlap': int(os.getenv('CHUNK_OVERLAP', '50')),
-            'embedding_model': os.getenv('EMBEDDING_MODEL', 'all-MiniLM-L6-v2')
+            "data_folder": os.getenv("DATA_FOLDER", "./data"),
+            "vector_db_path": os.getenv("VECTOR_DB_PATH", "./vector_db"),
+            "chunk_size": int(os.getenv("CHUNK_SIZE", "512")),
+            "chunk_overlap": int(os.getenv("CHUNK_OVERLAP", "50")),
+            "embedding_model": os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2"),
         }
 
     def _get_default_url(self) -> str:
         """Get default API URL based on provider."""
-        provider = os.getenv('AI_PROVIDER', 'lmstudio').lower()
-        if provider == 'ollama':
-            return 'http://localhost:11434'
-        elif provider == 'lmstudio':
-            return 'http://localhost:1234/v1'
+        provider = os.getenv("AI_PROVIDER", "lmstudio").lower()
+        if provider == "ollama":
+            return "http://localhost:11434"
+        elif provider == "lmstudio":
+            return "http://localhost:1234/v1"
         else:
-            return 'http://localhost:8000/v1'
+            return "http://localhost:8000/v1"
 
     def get(self, key: str, default=None):
         """Get configuration value by key."""

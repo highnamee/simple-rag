@@ -2,17 +2,19 @@
 Generic Local AI client supporting multiple providers (LMStudio, Ollama, etc.)
 """
 
-import requests
 import json
-from typing import List, Optional, Dict, Any
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
+import requests
 
 from ..utils import logger
 
 
 class AIProvider(Enum):
     """Supported AI providers."""
+
     LMSTUDIO = "lmstudio"
     OLLAMA = "ollama"
     OPENAI_COMPATIBLE = "openai_compatible"
@@ -21,6 +23,7 @@ class AIProvider(Enum):
 @dataclass
 class ChatMessage:
     """Represents a chat message."""
+
     role: str  # "system", "user", or "assistant"
     content: str
 
@@ -28,11 +31,13 @@ class ChatMessage:
 class LocalAIClient:
     """Generic client for local AI providers (LMStudio, Ollama, etc.)."""
 
-    def __init__(self,
-                 provider: str = "lmstudio",
-                 api_url: str = None,
-                 api_key: str = None,
-                 model: str = None):
+    def __init__(
+        self,
+        provider: str = "lmstudio",
+        api_url: str = None,
+        api_key: str = None,
+        model: str = None,
+    ):
         """
         Initialize the local AI client.
 
@@ -56,7 +61,7 @@ class LocalAIClient:
             self.api_url = api_url or "http://localhost:8000/v1"
             self.api_key = api_key or "local-api-key"
 
-        self.api_url = self.api_url.rstrip('/')
+        self.api_url = self.api_url.rstrip("/")
 
         # Setup session
         self.session = requests.Session()
@@ -100,40 +105,47 @@ class LocalAIClient:
             logger.error(f"Error getting models from {self.provider.value}: {e}")
             return []
 
-    def chat_completion(self,
-                       messages: List[ChatMessage],
-                       model: Optional[str] = None,
-                       temperature: float = 0.7,
-                       max_tokens: int = 1000,
-                       stream: bool = False) -> Optional[str]:
+    def chat_completion(
+        self,
+        messages: List[ChatMessage],
+        model: Optional[str] = None,
+        temperature: float = 0.7,
+        max_tokens: int = 1000,
+        stream: bool = False,
+    ) -> Optional[str]:
         """Send chat completion request."""
 
         # Convert messages to dict format
         message_dicts = [{"role": msg.role, "content": msg.content} for msg in messages]
 
         if self.provider == AIProvider.OLLAMA:
-            return self._ollama_chat_completion(message_dicts, model, temperature, max_tokens, stream)
+            return self._ollama_chat_completion(
+                message_dicts, model, temperature, max_tokens, stream
+            )
         else:
-            return self._openai_compatible_chat_completion(message_dicts, model, temperature, max_tokens, stream)
+            return self._openai_compatible_chat_completion(
+                message_dicts, model, temperature, max_tokens, stream
+            )
 
-    def _ollama_chat_completion(self, messages: List[Dict], model: str, temperature: float, max_tokens: int, stream: bool):
+    def _ollama_chat_completion(
+        self,
+        messages: List[Dict],
+        model: str,
+        temperature: float,
+        max_tokens: int,
+        stream: bool,
+    ):
         """Handle Ollama-specific chat completion."""
         payload = {
             "model": model or self.model or "llama2",
             "messages": messages,
             "stream": stream,
-            "options": {
-                "temperature": temperature,
-                "num_predict": max_tokens
-            }
+            "options": {"temperature": temperature, "num_predict": max_tokens},
         }
 
         try:
             response = self.session.post(
-                f"{self.api_url}/api/chat",
-                json=payload,
-                timeout=60,
-                stream=stream
+                f"{self.api_url}/api/chat", json=payload, timeout=60, stream=stream
             )
             response.raise_for_status()
 
@@ -147,13 +159,20 @@ class LocalAIClient:
             logger.error(f"Error in Ollama chat completion: {e}")
             return None
 
-    def _openai_compatible_chat_completion(self, messages: List[Dict], model: str, temperature: float, max_tokens: int, stream: bool):
+    def _openai_compatible_chat_completion(
+        self,
+        messages: List[Dict],
+        model: str,
+        temperature: float,
+        max_tokens: int,
+        stream: bool,
+    ):
         """Handle OpenAI-compatible chat completion (LMStudio, etc.)."""
         payload = {
             "messages": messages,
             "temperature": temperature,
             "max_tokens": max_tokens,
-            "stream": stream
+            "stream": stream,
         }
 
         # Add model if specified
@@ -165,7 +184,7 @@ class LocalAIClient:
                 f"{self.api_url}/chat/completions",
                 json=payload,
                 timeout=60,
-                stream=stream
+                stream=stream,
             )
             response.raise_for_status()
 
@@ -179,11 +198,13 @@ class LocalAIClient:
             logger.error(f"Error in {self.provider.value} chat completion: {e}")
             return None
 
-    def chat_completion_stream(self,
-                              messages: List[ChatMessage],
-                              model: Optional[str] = None,
-                              temperature: float = 0.7,
-                              max_tokens: int = 1000):
+    def chat_completion_stream(
+        self,
+        messages: List[ChatMessage],
+        model: Optional[str] = None,
+        temperature: float = 0.7,
+        max_tokens: int = 1000,
+    ):
         """Stream chat completion response."""
 
         response = self.chat_completion(
@@ -191,7 +212,7 @@ class LocalAIClient:
             model=model,
             temperature=temperature,
             max_tokens=max_tokens,
-            stream=True
+            stream=True,
         )
 
         if response is None:
@@ -203,7 +224,7 @@ class LocalAIClient:
                 for line in response.iter_lines():
                     if line:
                         try:
-                            data = json.loads(line.decode('utf-8'))
+                            data = json.loads(line.decode("utf-8"))
                             if "message" in data and "content" in data["message"]:
                                 content = data["message"]["content"]
                                 if content:
@@ -216,16 +237,16 @@ class LocalAIClient:
                 # OpenAI-compatible streaming (LMStudio)
                 for line in response.iter_lines():
                     if line:
-                        line = line.decode('utf-8')
-                        if line.startswith('data: '):
+                        line = line.decode("utf-8")
+                        if line.startswith("data: "):
                             line = line[6:]  # Remove 'data: ' prefix
-                            if line.strip() == '[DONE]':
+                            if line.strip() == "[DONE]":
                                 break
                             try:
                                 data = json.loads(line)
-                                if 'choices' in data and len(data['choices']) > 0:
-                                    delta = data['choices'][0].get('delta', {})
-                                    content = delta.get('content', '')
+                                if "choices" in data and len(data["choices"]) > 0:
+                                    delta = data["choices"][0].get("delta", {})
+                                    content = delta.get("content", "")
                                     if content:
                                         yield content
                             except json.JSONDecodeError:
