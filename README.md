@@ -28,7 +28,7 @@ A lightweight RAG system with incremental indexing and streaming CLI chat interf
 
    **Other OpenAI-compatible APIs**: Any local AI server that supports OpenAI-compatible endpoints
 
-2. **Python 3.8+**: Required for the application
+2. **Python 3.11+**: This project requires Python 3.11 or higher (supports Python 3.11 and 3.12).
 
 ## Installation
 
