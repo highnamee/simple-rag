@@ -35,6 +35,15 @@ A lightweight RAG system with incremental indexing and streaming CLI chat interf
 1. Clone or download this project
 2. Install dependencies:
 
+   **Quick setup (recommended):**
+
+   ```bash
+   make setup          # Production setup
+   make setup-dev      # Development setup (for contributors)
+   ```
+
+   **Manual setup:**
+
    ```bash
    pip install -r requirements.txt
    ```
@@ -65,6 +74,10 @@ data/
 ### 2. Start the Chat Interface
 
 ```bash
+# Using make (recommended)
+make run
+
+# Or directly
 python chat.py
 ```
 
@@ -145,11 +158,20 @@ EMBEDDING_MODEL=all-MiniLM-L6-v2
 
 ```
 simple-rag/
-├── chat.py                    # Main CLI application with streaming
-├── requirements.txt           # Python dependencies
-├── .env                      # Configuration file
-├── data/                     # Your documents go here
-├── vector_db/                # Vector database storage
+├── bin/                      # Executable scripts
+│   ├── setup.sh                 # Production setup script
+│   ├── setup-dev.sh             # Development setup script
+│   └── run.sh                   # Application runner script
+├── .github/workflows/        # GitHub Actions for CI/CD
+├── chat.py                   # Main CLI application with streaming
+├── Makefile                  # Development and build commands
+├── requirements.txt          # Python dependencies
+├── requirements-dev.txt      # Development dependencies
+├── pyproject.toml           # Project configuration and tool settings
+├── .env                     # Configuration file
+├── DEVELOPMENT.md           # Development guidelines and setup
+├── data/                    # Your documents go here
+├── vector_db/               # Vector database storage
 └── src/
     ├── core/                 # Core RAG components
     │   ├── document_processor.py  # Document loading and chunking
@@ -213,6 +235,27 @@ simple-rag/
 - `rich`: For beautiful CLI interface
 - `python-dotenv`: For configuration management
 - `colorama`: For cross-platform colored output
+
+## Development
+
+For contributing to this project, see [DEVELOPMENT.md](DEVELOPMENT.md) for detailed development guidelines, code style requirements, and setup instructions.
+
+### Quick Development Setup
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd simple-rag
+
+# Run development setup
+make setup-dev
+
+# Activate virtual environment
+source venv/bin/activate
+
+# Start developing!
+make help  # See available commands
+```
 
 ## License
 
